@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Cocktail or Color? – Free Online Trivia Quiz Game</title>
+    <meta name="description" content="Can you tell a cocktail from a colour? Play Cocktail or Color? — the free trivia quiz where stylish names like Blue Lagoon and Midnight Blue test your instincts. Play instantly, no sign-up needed.">
+    <link rel="canonical" href="https://cocktailorcolor.com/" />
+    <meta property="og:title" content="Cocktail or Color? – Free Trivia Quiz">
+    <meta property="og:description" content="Blue Lagoon. Midnight Blue. Dusty Rose. Some are drinks. Some are shades. Can you tell them apart? Play free, no sign-up.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cocktailorcolor.com/">
+    <style>
+        :root {
+            --primary:   #3498db;
+            --secondary: #2ecc71;
+            --accent:    #f39c12;
+            --dark-bg:   #121212;
+            --darker-bg: #0a0a0a;
+            --card-bg:   #1e1e1e;
+            --light-text:#f5f5f5;
+            --gray-text: #a0a0a0;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--light-text);
+            background: var(--dark-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
+        a:hover { color: var(--secondary); }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* ── Header ─────────────────────────────────────── */
+        header {
+            background: var(--darker-bg);
+            padding: 18px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        header .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .site-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--light-text);
+            letter-spacing: -0.01em;
+        }
+        .site-title span { color: var(--accent); }
+        .header-tagline {
+            font-size: 0.82rem;
+            color: var(--gray-text);
+        }
+
+        /* ── Main ───────────────────────────────────────── */
+        main { flex: 1; }
+
+        .intro {
+            padding: 48px 0 32px;
+            text-align: center;
+        }
+        .intro h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        .intro h1 span { color: var(--accent); }
+        .intro p {
+            color: var(--gray-text);
+            font-size: 1rem;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ── Quiz wrap ──────────────────────────────────── */
+        .quiz-section { padding: 8px 0 48px; }
+
+        .quiz-progress-label {
+            font-size: 0.82rem;
+            color: var(--gray-text);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .quiz-bar-track {
+            height: 4px;
+            background: var(--card-bg);
+            border-radius: 2px;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+        .quiz-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 52px 32px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .quiz-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--light-text);
+            letter-spacing: 0.01em;
+            margin-bottom: 10px;
+        }
+        .quiz-feedback {
+            height: 28px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        .quiz-feedback--correct { color: var(--secondary); }
+        .quiz-feedback--wrong   { color: #e74c3c; }
+
+        .quiz-answers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .btn-answer {
+            padding: 18px 12px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.15s, transform 0.1s;
+        }
+        .btn-answer:active { transform: scale(0.97); }
+        .btn-answer--cocktail {
+            background: rgba(243,156,18,0.12);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .btn-answer--cocktail:hover { background: rgba(243,156,18,0.25); }
+        .btn-answer--color {
+            background: rgba(52,152,219,0.12);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-answer--color:hover { background: rgba(52,152,219,0.25); }
+        .btn-answer:disabled { opacity: 0.45; cursor: default; }
+
+        /* ── Results ────────────────────────────────────── */
+        #quiz-results { text-align: center; }
+        .result-score {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--light-text);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .result-label  { font-size: 1rem;  color: var(--gray-text); margin-bottom: 12px; }
+        .result-verdict{ font-size: 1.2rem; font-weight: 600; margin-bottom: 32px; }
+
+        .review-list { list-style: none; padding: 0; text-align: left; margin-bottom: 28px; }
+        .review-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 14px;
+            margin-bottom: 6px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--card-bg);
+        }
+        .review-list li.r-correct { border-left: 3px solid var(--secondary); }
+        .review-list li.r-wrong   { border-left: 3px solid #e74c3c; }
+        .review-name { flex: 1; font-weight: 600; }
+        .review-badge {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 99px;
+        }
+        .review-badge--cocktail {
+            background: rgba(243,156,18,0.18);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+        .review-badge--color {
+            background: rgba(52,152,219,0.18);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        .review-icon { font-size: 1rem; }
+        .review-icon--correct { color: var(--secondary); }
+        .review-icon--wrong   { color: #e74c3c; }
+
+        .btn-restart {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 13px 28px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-restart:hover { background: #2980b9; }
+
+        /* ── About / FAQ ────────────────────────────────── */
+        .about-section {
+            padding: 40px 0;
+            border-top: 1px solid var(--card-bg);
+        }
+        .about-section h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        details {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 10px;
+        }
+        summary {
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+        summary::after { content: ' ▾'; color: var(--gray-text); font-size: 0.85rem; }
+        details[open] summary::after { content: ' ▴'; }
+        .faq-body {
+            margin-top: 10px;
+            font-size: 0.92rem;
+            color: var(--gray-text);
+            line-height: 1.65;
+        }
+
+        /* ── Footer ─────────────────────────────────────── */
+        footer {
+            background: var(--darker-bg);
+            padding: 24px 0;
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--gray-text);
+            border-top: 1px solid #1a1a1a;
+        }
+        footer a { color: var(--gray-text); }
+        footer a:hover { color: var(--light-text); }
+
+        @media (max-width: 480px) {
+            .intro h1 { font-size: 1.6rem; }
+            .quiz-name { font-size: 1.6rem; }
+            .quiz-card { padding: 36px 20px; }
+            .quiz-answers { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div>
+                <p class="site-title">🍹 <span>Cocktail</span> or Color?</p>
+                <p class="header-tagline">The free name-guessing trivia quiz</p>
+            </div>
+            <a href="https://triviaquiz.games" target="_blank" rel="noopener noreferrer" style="font-size:0.82rem;color:var(--gray-text);">More quizzes ↗</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- ── Intro ───────────────────────────────────── -->
+        <section class="intro">
+            <div class="container">
+                <h1><span>Cocktail</span> or Color?</h1>
+                <p>
+                    <em>Blue Lagoon. Midnight Blue. Dusty Rose. Pink Lady.</em><br>
+                    Some are drinks. Some are shades. Can you tell them apart?
+                </p>
+            </div>
+        </section>
+
+        <!-- ── Quiz ───────────────────────────────────── -->
+        <section class="quiz-section">
+            <div class="container">
+
+                <!-- Question screen -->
+                <div id="quiz-screen">
+                    <p class="quiz-progress-label">
+                        Question <span id="q-current">1</span> of <span id="q-total">10</span>
+                    </p>
+                    <div class="quiz-bar-track">
+                        <div class="quiz-bar-fill" id="q-bar"></div>
+                    </div>
+                    <div class="quiz-card">
+                        <div class="quiz-name" id="q-name">—</div>
+                        <div class="quiz-feedback" id="q-feedback"></div>
+                    </div>
+                    <div class="quiz-answers">
+                        <button class="btn-answer btn-answer--cocktail" id="btn-cocktail">
+                            🍹 Cocktail
+                        </button>
+                        <button class="btn-answer btn-answer--color" id="btn-color">
+                            🎨 Color
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results screen -->
+                <div id="quiz-results" hidden>
+                    <div class="result-score" id="res-score"></div>
+                    <p class="result-label">out of 10 correct</p>
+                    <p class="result-verdict" id="res-verdict"></p>
+                    <ul class="review-list" id="review-list"></ul>
+                    <button class="btn-restart" id="btn-restart">↺ Play again</button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ── About ──────────────────────────────────── -->
+        <section class="about-section">
+            <div class="container">
+                <h2>About Cocktail or Color?</h2>
+
+                <details>
+                    <summary>What makes this quiz tricky?</summary>
+                    <p class="faq-body">
+                        Both cocktails and colours follow the same naming pattern — an evocative adjective paired
+                        with a vivid noun. <em>Blue Lagoon</em> is a real cocktail; <em>Cobalt Blue</em> is a
+                        real paint colour. Without prior knowledge, the names are almost indistinguishable.
+                    </p>
+                </details>
+
+                <details>
+                    <summary>Are the cocktail names real?</summary>
+                    <p class="faq-body">
+                        Yes. Every cocktail in the game is an established recipe — from classics like
+                        <em>White Russian</em> and <em>Pink Lady</em> to lesser-known gems like
+                        <em>Green Ghost</em> and <em>Brown Derby</em>. No names were invented.
+                    </p>
+                </details>
+
+                <details>
+                    <summary>Are the colour names real?</summary>
+                    <p class="faq-body">
+                        All colour names are used in design, fashion, or paint systems —
+                        <em>Midnight Blue</em>, <em>Burnt Orange</em>, <em>Sage Green</em>, and so on.
+                        They were chosen because they share the same stylistic register as the cocktails.
+                    </p>
+                </details>
+
+                <details>
+                    <summary>How many questions are in the game?</summary>
+                    <p class="faq-body">
+                        Each round draws 10 random questions from a pool of 40 names (20 cocktails + 20 colours),
+                        so every game is different. Hit <em>Play again</em> to get a fresh mix.
+                    </p>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Part of <a href="https://triviaquiz.games" target="_blank" rel="noopener noreferrer">triviaquiz.games</a>
+                &nbsp;|&nbsp;
+                <a href="https://legal.lueders.solutions/en/imprint/" target="_blank" rel="noopener noreferrer">Imprint</a>
+                &nbsp;|&nbsp;
+                <a href="https://legal.lueders.solutions/en/privacy/web-triviaquiz/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+            </p>
+            <p style="margin-top:6px;">Made by <a href="https://lueders.app" target="_blank" rel="noopener noreferrer">lueders.app</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // ── Question pools ──────────────────────────────────────────
+        const COCKTAILS = [
+            "Blue Lagoon", "Pink Lady", "Golden Dream", "Black Russian",
+            "White Russian", "Red Snapper", "Silver Fizz", "Green Ghost",
+            "Yellow Bird", "Black Velvet", "Blue Hawaiian", "White Lady",
+            "Golden Cadillac", "Blue Moon", "Pink Flamingo", "Silver Bullet",
+            "Golden Gate", "Brown Derby", "Red Lion", "Purple Rain",
+        ];
+        const COLORS = [
+            "Midnight Blue", "Rose Gold", "Cobalt Blue", "Dusty Rose",
+            "Electric Blue", "Forest Green", "Burnt Orange", "Sage Green",
+            "Champagne Gold", "Charcoal Gray", "Coral Red", "Emerald Green",
+            "Pearl White", "Scarlet Red", "Silver Gray", "Amber Gold",
+            "Royal Blue", "Warm Beige", "Deep Purple", "Golden Brown",
+        ];
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function generateQuiz(count) {
+            const pool = [
+                ...COCKTAILS.map(n => ({ name: n, type: 'cocktail' })),
+                ...COLORS.map(n    => ({ name: n, type: 'color' })),
+            ];
+            return shuffle(pool).slice(0, count);
+        }
+
+        // ── DOM refs ────────────────────────────────────────────────
+        const screenEl     = document.getElementById('quiz-screen');
+        const resultsEl    = document.getElementById('quiz-results');
+        const qNameEl      = document.getElementById('q-name');
+        const qCurrentEl   = document.getElementById('q-current');
+        const qTotalEl     = document.getElementById('q-total');
+        const qBarEl       = document.getElementById('q-bar');
+        const feedbackEl   = document.getElementById('q-feedback');
+        const btnCocktail  = document.getElementById('btn-cocktail');
+        const btnColor     = document.getElementById('btn-color');
+        const btnRestart   = document.getElementById('btn-restart');
+        const resScoreEl   = document.getElementById('res-score');
+        const resVerdictEl = document.getElementById('res-verdict');
+        const reviewListEl = document.getElementById('review-list');
+
+        const TOTAL = 10;
+        let questions = [], current = 0, score = 0, answers = [];
+
+        const VERDICTS = [
+            [10, 'Perfect! True connoisseur. 🏆'],
+            [9,  'Excellent! Almost flawless.'],
+            [7,  'Great job! You clearly have taste.'],
+            [5,  'Not bad — but a few names fooled you.'],
+            [3,  'Tricky, right? Give it another try!'],
+            [0,  'The names got you this time. Practice makes perfect!'],
+        ];
+        const verdict = s => VERDICTS.find(([min]) => s >= min)[1];
+
+        function startQuiz() {
+            questions = generateQuiz(TOTAL);
+            current = score = 0;
+            answers = [];
+            qTotalEl.textContent = TOTAL;
+            resultsEl.hidden = true;
+            screenEl.hidden  = false;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[current];
+            qNameEl.textContent    = q.name;
+            qCurrentEl.textContent = current + 1;
+            qBarEl.style.width     = `${(current / TOTAL) * 100}%`;
+            feedbackEl.textContent = '';
+            feedbackEl.className   = 'quiz-feedback';
+            btnCocktail.disabled   = false;
+            btnColor.disabled      = false;
+        }
+
+        function handleAnswer(guess) {
+            btnCocktail.disabled = btnColor.disabled = true;
+            const q = questions[current];
+            const ok = guess === q.type;
+            if (ok) score++;
+            answers.push({ name: q.name, type: q.type, guess, correct: ok });
+            feedbackEl.textContent = ok
+                ? `✓ Correct — ${q.name} is a ${q.type}!`
+                : `✗ Nope — ${q.name} is actually a ${q.type}.`;
+            feedbackEl.className = 'quiz-feedback ' + (ok ? 'quiz-feedback--correct' : 'quiz-feedback--wrong');
+            current++;
+            if (current < TOTAL) setTimeout(showQuestion, 900);
+            else setTimeout(showResults, 1000);
+        }
+
+        function showResults() {
+            qBarEl.style.width = '100%';
+            resScoreEl.textContent  = score;
+            resVerdictEl.textContent = verdict(score);
+            reviewListEl.innerHTML = '';
+            answers.forEach(a => {
+                const li = document.createElement('li');
+                li.className = a.correct ? 'r-correct' : 'r-wrong';
+                li.innerHTML = `
+                    <span class="review-name">${a.name}</span>
+                    <span class="review-badge review-badge--${a.type}">${a.type}</span>
+                    <span class="review-icon ${a.correct ? 'review-icon--correct' : 'review-icon--wrong'}">${a.correct ? '✓' : '✗'}</span>
+                `;
+                reviewListEl.appendChild(li);
+            });
+            screenEl.hidden  = true;
+            resultsEl.hidden = false;
+        }
+
+        btnCocktail.addEventListener('click', () => handleAnswer('cocktail'));
+        btnColor.addEventListener('click',    () => handleAnswer('color'));
+        btnRestart.addEventListener('click',  startQuiz);
+
+        startQuiz();
+    </script>
+</body>
+</html>
