@@ -145,11 +145,10 @@
         }
 
         function generateQuiz(count) {
-            const pool = [
-                ...COCKTAILS.map(n => ({ name: n, type: 'cocktail' })),
-                ...COLORS.map(n    => ({ name: n, type: 'color' })),
-            ];
-            return shuffle(pool).slice(0, count);
+            const half = count / 2;
+            const cocktails = shuffle(COCKTAILS).slice(0, half).map(n => ({ name: n, type: 'cocktail' }));
+            const colors    = shuffle(COLORS).slice(0, half).map(n    => ({ name: n, type: 'color' }));
+            return shuffle([...cocktails, ...colors]);
         }
 
         // ── DOM refs ────────────────────────────────────────────────
